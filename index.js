@@ -3,19 +3,35 @@ const app=express()
 const Book=require("./models/books.models")
 const {initializeDatabase} = require("./db/db.connect")
 require("dotenv").config()
+const cors = require("cors");
+const corsOptions = {
+  origin: "*",
+  credentials: true,
+  optionSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json())
 
 initializeDatabase()
+
+  
 //add the book
 const addBook=async(bookData)=>{
     try {
         const book= new Book(bookData)
         const saved= await book.save()
+        if(saved){
+            console.log("Data saved")
+        }else{
+            console.log("Data is not saved")
+        }
         return saved
     } catch (error) {
-        console.log("Book is not added")
+        console.log("Book is not added",error)
     }
 }
+
 app.post("/books",async(req,res)=>{
     try {
         const savedData=await addBook(req.body)
@@ -94,7 +110,7 @@ app.get("/books/author/:author",async(req,res)=>{
     try {
         const data=await findBookByAuthor(req.params.author)
         if(data){
-            res.status(200).json({message:"Book found",data})
+            res.status(200).json(data)
         }else{
             res.status(404).json({message:"Book not found."})
         }
