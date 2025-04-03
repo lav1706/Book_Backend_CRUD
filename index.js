@@ -36,7 +36,7 @@ app.post("/books",async(req,res)=>{
     try {
         const savedData=await addBook(req.body)
         if(savedData){
-            res.status(200).json({message:"Book added Sucessfully",savedData})
+            res.status(200).json(savedData)
         }
         else{
             res.status(404).json({message:"Book not added Sucessfully."})
